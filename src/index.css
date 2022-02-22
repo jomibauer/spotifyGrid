@@ -1,0 +1,170 @@
+html {
+  height:100%;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  height:100%;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.currently-playing-square{
+  max-width: 150px !important;
+  width: 100%;
+}
+
+.queue-box{
+  box-shadow: 3px 3px 8px;
+}
+
+.queue-first {
+  width: 105px !important;
+  height: 105px !important;
+
+}
+.queue-second {
+  width: 95px !important;
+  height: 95px !important;
+}
+.queue-third {
+  width: 85px !important;
+  height: 85px !important;
+}
+.queue-fourth {
+  width: 75px !important;
+  height: 75px !important;
+}
+
+.text-queue-first {
+  font-size: 1em;
+}
+.text-queue-second {
+  font-size: 0.95em;
+}
+.text-queue-third {
+  font-size: 0.85em;
+}
+.text-queue-fourth {
+  font-size: 0.75em;
+}
+
+.song-info-text{
+  font-size: small;
+  color: rgb(77, 75, 75);
+}
+
+
+.grid-square-container{
+  
+  max-width: 150px;
+  
+}
+
+.square-container {
+  position: relative;
+  width: 100%;
+}
+
+.grid-square.flip {
+  transform: rotateY(360deg);
+  -webkit-transform: rotateY(360deg);
+}
+
+.grid-square{
+  display: block;
+  width: 100%;
+  height: auto;
+  transform: rotatey(0deg);
+  -webkit-transform: rotateY(0deg);
+  transition: transform 1.5s;
+  -webkit-transition: transform 1.5s;
+}
+
+.grid-square-loading{
+  display: block;
+  width: 100%;
+  height: auto;
+  background-color: lightgray;
+}
+
+.square-overlay{
+  position: absolute;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5); /* Black see-through */
+  color: #f1f1f1;
+  width: 100%;
+  transition: .5s ease;
+  opacity:0;
+  font-size: 10px;
+  padding: 10px;
+  text-align: left;
+  white-space: normal !important;
+}
+
+.overlay-play-button {
+  background-color:rgb(4, 87, 28);
+  border-color: rgb(74, 156, 78);
+  color:rgb(196, 196, 196);
+  position: absolute;
+  border-radius: 5px;
+  bottom: 2px;
+  right: 2px;
+}
+
+.square-container:hover .square-overlay {
+  opacity: 1;
+}
+
+#root{
+  background-color: black;
+  min-height: 100%;
+  height: fit-content;
+}
+
+.app-header{
+  background-color:rgb(85, 117, 92);
+  margin-top: 1em;
+}
+
+.grid-table{
+  display:flex;
+  justify-content:center;
+  margin-bottom: 1em;
+}
+
+.grid-table td{
+  width:9em;
+  white-space: nowrap
+}
+
+.grid-square-label {
+  max-width: 140px;
+  display: block; 
+  word-wrap: break-word;
+}
+
+.login-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid whitesmoke;
+  width: 50% !important;
+  height: 50% !important;
+  flex-wrap: wrap;
+}
+
+
+
+
+.App{
+  height: 100%;
+}
