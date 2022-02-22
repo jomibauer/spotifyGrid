@@ -2,6 +2,7 @@ import './App.css';
 import { useEffect } from 'react';
 import { Routes, Route } from "react-router-dom";
 import SpotifyGrid from './components/SpotifyGrid';
+import Callback from './Callback';
 import Login from './components/Login';
 
 const getSpotifyAuthParams = (hash) => {
@@ -39,6 +40,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="/grid" element={<SpotifyGrid/>} />
+        <Route path= "/load" element={<Callback/>} />
       </Routes>
       
         

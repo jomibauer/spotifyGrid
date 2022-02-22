@@ -1,5 +1,6 @@
 export class Album{
-    constructor(id, name, artist, year, songs, artPath, uri){
+    constructor(seq, id, name, artist, year, songs, artPath, uri){
+        this.seq = seq;
         this.id = id;
         this.name = name;
         this.artist = artist;
@@ -27,6 +28,10 @@ export class Album{
 
     getArtPath(){
         return this.artPath;
+    }
+
+    getId(){
+        return this.id;
     }
 
     getUri(){

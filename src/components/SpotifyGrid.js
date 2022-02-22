@@ -1,105 +1,9 @@
 import Grid from './grid-components/Grid';
 import Header from './header-components/Header';
-import { Album } from '../model/Album';
-import { Track } from '../model/Track';
 import { useState,useEffect, useCallback } from 'react';
-import axios from 'axios';
+import { SpotifyService } from '../services/spotifyService';
 
-const albums_endpoint = "https://api.spotify.com/v1/me/albums";
-const currently_playing_endpoint = "https://api.spotify.com/v1/me/player/currently-playing";
-const start_playback_endpoint = "https://api.spotify.com/v1/me/player/play";
-const recently_played_endpoint = "https://api.spotify.com/v1/me/player/recently-played";
-const pause_playback_endpoint =  	'https://api.spotify.com/v1/me/player/pause';
-
-function getAlbumsFromResponse(response){
-    let returnObj = { albums:[], total:0};
-    let currAlbum={};
-    returnObj.total = response.total;
-    let albums = response.items;
-    if(!albums){
-      returnObj.albums.push(new Album(-1, "no albums found", "n/a", "n/a", [], "/grayBox.jpg", "n/a" ));
-    }
-    else{
-      for(let i = 0; i < albums.length; i++) {
-        currAlbum = albums[i].album;
-        returnObj.albums.push(new Album
-          (
-            i, //id
-            currAlbum.name, //album name
-            currAlbum.artists[0].name, //artist
-            currAlbum.release_date.slice(0,4), //release year
-            [], //songs tba
-            currAlbum.images[1].url, //img url 
-            currAlbum.uri //uri for album
-            ));
-      }
-    }
-  
-    return returnObj;
-  }
-function getCurrentlyPlayingFromResponse(response) {
-  let songInfo = response.item;
-  let returnTrack = new Track();
-  if(!songInfo){
-    returnTrack = new Track
-    (
-      -1,
-      "no song currently playing",
-      "N/A",
-      "N/A",
-      "N/A",
-      "/grayBox.jpg"
-    );
-  }
-  else{
-    returnTrack = new Track
-    (
-      songInfo.id, //id
-      songInfo.name, //trackname
-      songInfo.album.artists[0].name, //artist 
-      songInfo.album.release_date.slice(0, 4), //release year 
-      songInfo.album.name, //album
-      songInfo.album.images[1].url //album art url 
-    );
-  }
-  return returnTrack;
-}
-
-function getRecentlyPlayedFromResponse(response) {
-  let songs = response.items;
-  let albums = [];
-  let returnTracks = [];
- 
-  for(let i = songs.length - 1; i> 0; i--){
-    if (returnTracks.length === 4){ break;}
-    if(!albums.includes(songs[i].track.album.id)){
-      albums.push(songs[i].track.album.id);
-      returnTracks.push(new Album
-        (
-          songs[i].track.id, //id
-          songs[i].track.album.name, //album
-          songs[i].track.album.artists[0].name, //artist 
-          songs[i].track.album.release_date.slice(0, 4), //release year 
-          [],
-          songs[i].track.album.images[1].url, //album art url 
-          songs[i].track.album.images[1].url.uri,
-        ));
-    }
-  }
-  while(returnTracks.length < 4) {
-    returnTracks.push(new Track
-    (
-      -1,
-      "",
-      "Recent track",
-      "not found",
-      "",
-      "/grayBox.jpg"
-    ));
-  }
-  
-  return returnTracks;
-}
+const spotifyService = new SpotifyService();
 
 const SpotifyGrid = () => {
     const [albumList, setAlbumList] = useState();
@@ -108,75 +12,50 @@ const SpotifyGrid = () => {
     const [isCurrentlyPlaying, setIsCurrentlyPlaying] = useState(false);
     const [recentlyPlayed, setRecentlyPlayed] = useState();
 
-    const getCurrentlyPlaying = useCallback( async () => {
-      await axios
-        .get(currently_playing_endpoint, {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem('accessToken'),
-          },
-          transformResponse: axios.defaults.transformResponse.concat((data) => {
-            return getCurrentlyPlayingFromResponse(data);
-          })
-        }).then((response) =>{
-          setCurrentlyPlaying(response.data);
-          setIsCurrentlyPlaying(response.data.id === -1 ? false : true);
-          
-          return response.data;
-        })
+    function requestFailed(response){
+      if(response === 401) {return true;}
+      return false;
+    }
+
+    function checkResponse(response){
+      if(requestFailed(response)) {window.location = './login';} 
+    }
+
+    const getCurrentlyPlaying = useCallback( () => {
+      spotifyService.getCurrentlyPlaying().then(response => {
+        if(response === 401) {return true;}
+        setCurrentlyPlaying(response);
+        setIsCurrentlyPlaying(response.id === -1 ? false : true);
+      });
     }, []);
 
     const getAlbums = useCallback(() => {
-      axios
-        .get(albums_endpoint + `?limit=32&offset=0`, {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem('accessToken'),
-          },
-          transformResponse: axios.defaults.transformResponse.concat((data) => {
-            return getAlbumsFromResponse(data)
-          })
-        })
-        .then((response) => {
-          setAlbumList(response.data.albums);
-          setAlbumsInLib(response.data.total);
-          return response.data;
-        });
+      spotifyService.getAlbums().then( response =>{
+        console.log(response);
+        if(response === 401) {return true;} 
+        setAlbumList(response.albums);
+        setAlbumsInLib(response.total);
+      });
     }, []);
 
     const getRecentlyPlayed = useCallback(() => {
-      let recentlyPlayedSongs=[];
-      axios.get(recently_played_endpoint + '?limit=50',{
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem('accessToken'),
-        },
-        transformResponse: axios.defaults.transformResponse.concat((data) => {
-          return getRecentlyPlayedFromResponse(data);
-        })
-      }).then((response) =>{
-        recentlyPlayedSongs = response.data;
-        setRecentlyPlayed([...recentlyPlayedSongs]);
-        return recentlyPlayedSongs;
+      spotifyService.getRecentlyPlayed().then(response =>{
+        if(response === 401) {return true;}
+        setRecentlyPlayed([...response]);
       })
-    },[])
+    },[currentlyPlaying])
     
-    const changeOneAlbum = async (albumIndex) =>{
+    const changeOneAlbum = (albumIndex) =>{
       let newAlbumList = albumList;
       let tempOffset = Math.floor(Math.random() * (albumsInLib - 0 + 1) + 0);
-      await axios
-        .get(albums_endpoint + `?limit=1&offset=${tempOffset}`, {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem('accessToken'),
-          },
-          transformResponse: axios.defaults.transformResponse.concat((data) => {
-            return getAlbumsFromResponse(data)
-          })
-          })
-        .then((response) => {
-          if(newAlbumList){
-            newAlbumList[albumIndex] = response.data.albums[0];
-            setAlbumList([...newAlbumList]);
-            return response.data.albums[0];
-          }
-        });
+
+      spotifyService.getAlbum(tempOffset).then( response => {
+        checkResponse(response);
+        if(newAlbumList){
+          newAlbumList[albumIndex] = response;
+          setAlbumList([...newAlbumList]);
+        }
+      })
     }
 
     const updateHeader = () =>{
@@ -184,30 +63,17 @@ const SpotifyGrid = () => {
       getRecentlyPlayed();
     }
 
-    const playAlbum = async (uri) => {
-
-      await axios.put(start_playback_endpoint, 
-        {  
-          "context_uri": uri
-        },
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem('accessToken'),
-          },
-        }).then((response) => {
-          setTimeout( function() {getCurrentlyPlaying();
-          }, 1000);
-          console.log(response)
-        });
-
+    const playAlbum = (uri) => {
+      spotifyService.playAlbum(uri).then( response => {
+        checkResponse(response);
+        setTimeout( function() {
+          getCurrentlyPlaying();
+        }, 1000);
+      })
     }
 
     const togglePlayback = async () => {
-      await axios.put((isCurrentlyPlaying ? pause_playback_endpoint: start_playback_endpoint), {}, {
-        headers:{
-          Authorization: "Bearer " + localStorage.getItem('accessToken'),
-        }
-      });
+      await spotifyService.togglePlayback(isCurrentlyPlaying);
       setIsCurrentlyPlaying(!isCurrentlyPlaying);
     }
 

@@ -2,7 +2,7 @@ const Login = () => {
     const querystring = require("query-string");
     const client_id = "17cf2003ce6d461697c7122d90a719ef";
     const baseUrl = "https://accounts.spotify.com/authorize?";
-    const redirect_uri = "http://localhost:3000/grid";
+    const redirect_uri = "http://localhost:3000/load";
     const scopes = "user-read-currently-playing user-library-read user-read-recently-played user-modify-playback-state";
 
     const loginUrl = baseUrl + querystring.stringify(
@@ -11,6 +11,7 @@ const Login = () => {
             client_id: client_id,
             scope: scopes,
             redirect_uri: redirect_uri,
+            show_dialog:true,
             state: generateRandomString(16)
         }
     );

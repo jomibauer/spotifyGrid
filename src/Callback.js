@@ -1,7 +1,17 @@
-import React from 'react';
+import {useEffect} from 'react';
+
 
 const Callback = () => {
-  return <div></div>;
+  const relocate = () => {
+    window.location = './grid';
+  }
+  
+  useEffect(() => {
+    setTimeout( function() {relocate();
+    }, 1000);
+  })
+  
+  return (<p>Loading...</p>);;
 };
 
 export default Callback;
