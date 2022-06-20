@@ -22,19 +22,23 @@ const Login = () => {
     };
 
     return (
-        <div className='container login-box rounded'>
-            <div className='row'>
-            </div>
-            <div className='row w-100'>
-                <div className='col-md-12 '>
-                    <h2 className='display-4'>Login to Spotify</h2>
+        <div className="row vh-100 align-items-center">
+
+            <div className='container login-box rounded'>
+                <div className='row'>
+                </div>
+                <div className='row w-100'>
+                    <div className='col-md-12 '>
+                        <h2 className='display-4'>Login to Spotify</h2>
+                    </div>
+                </div>
+                <div className='row m-3'>
+                    <div className='col-md-2 offset-10'>
+                        <button className='btn btn-success' onClick={handleLogin}>Login</button>
+                    </div>
                 </div>
             </div>
-            <div className='row'>
-                <div className='col-md-2 offset-10'>
-                    <button className='btn btn-success' onClick={handleLogin}>Login</button>
-                </div>
-            </div>
+
         </div>
     );
 };

@@ -1,5 +1,5 @@
 export class Track{
-    constructor(id, name, artist, year, album, album_id, artPath){
+    constructor(id, name, artist, year, album, album_id, artPath, songLength){
         this.id = id;
         this.name = name;
         this.artist = artist;
@@ -7,6 +7,7 @@ export class Track{
         this.album = album;
         this.album_id = album_id
         this.artPath = artPath;
+        this.songLength = songLength;
     }
 
     getName(){
@@ -31,5 +32,9 @@ export class Track{
 
     getArtPath(){
         return this.artPath;
+    }
+
+    getSongLength() {
+        return this.songLength;
     }
 }

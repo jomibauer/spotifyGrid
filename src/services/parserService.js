@@ -43,6 +43,7 @@ export class ParserService{
     
     parseCurrentlyPlayingResponse(response) {
     let songInfo = response.item;
+    console.log(response);
     let returnTrack = new Track();
 
     if(!songInfo){
@@ -53,7 +54,9 @@ export class ParserService{
         "N/A",
         "N/A",
         "N/A",
-        "/grayBox.jpg"
+        -1,
+        "/grayBox.jpg",
+        100000
         );
     }
     else{
@@ -65,7 +68,8 @@ export class ParserService{
         songInfo.album.release_date.slice(0, 4), //release year 
         songInfo.album.name, //album
         songInfo.album.id,
-        songInfo.album.images[1].url //album art url 
+        songInfo.album.images[1].url, //album art url
+        songInfo.duration 
         );
     }
     return returnTrack;

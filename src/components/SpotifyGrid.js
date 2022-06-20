@@ -47,7 +47,7 @@ const SpotifyGrid = () => {
     
     const changeOneAlbum = (albumIndex) =>{
       let newAlbumList = albumList;
-      let tempOffset = Math.floor(Math.random() * (albumsInLib - 0 + 1) + 0);
+      let tempOffset = Math.floor(Math.random() * ((albumsInLib - 1) - 0 + 1) + 0);
 
       spotifyService.getAlbum(tempOffset).then( response => {
         checkResponse(response);
